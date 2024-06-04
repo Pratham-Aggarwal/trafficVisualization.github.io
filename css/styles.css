@@ -1,0 +1,26 @@
+/* Add your custom CSS styles here */
+#map {
+    height: 100vh;
+    width: 100%;
+}
+
+#avenueLabel {
+    position: absolute;
+    background-color: white;
+    padding: 5px;
+    border: 1px solid black;
+    top: 10px;
+    left: 10px;
+}
+
+#graphContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+canvas {
+    width: 45%;
+    margin-bottom: 20px;
+}
