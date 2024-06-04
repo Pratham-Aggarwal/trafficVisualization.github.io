@@ -10,11 +10,11 @@ function initMap() {
         download: true,
         header: true,
         complete: function (results) {
-            var avenues = results.data.map(function (row) {
+            var avenues = results.data.map(function (row, index) {
                 return {
                     name: row.Description,
-                    lat: parseFloat(row.Latitude), // Parse latitude from CSV
-                    lng: parseFloat(row.Longitude) // Parse longitude from CSV
+                    lat: 36.7372 + (index * 0.01), // Synthetic latitude
+                    lng: -119.7871 + (index * 0.01) // Synthetic longitude
                 };
             });
             createRoute(map, avenues);
@@ -28,41 +28,40 @@ function createRoute(map, avenues) {
         return { lat: avenue.lat, lng: avenue.lng };
     });
 
-    // Create a line for the route
-    var routeLine = new google.maps.Polyline({
-        path: routePath,
-        geodesic: true,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-        map: map
-    });
-
-    // Add markers for each avenue (optional)
-    avenues.forEach(function (avenue) {
-        new google.maps.Marker({
-            position: { lat: avenue.lat, lng: avenue.lng },
-            map: map,
-            title: avenue.name
+    // Create a line for each segment
+    for (var i = 0; i < routePath.length - 1; i++) {
+        var segmentLine = new google.maps.Polyline({
+            path: [routePath[i], routePath[i + 1]],
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 5,
+            map: map
         });
+
+        attachSegmentEvents(segmentLine, avenues[i].name);
+    }
+}
+
+// Function to attach events to each segment
+function attachSegmentEvents(segmentLine, avenueName) {
+    google.maps.event.addListener(segmentLine, 'mouseover', function () {
+        segmentLine.setOptions({ strokeWeight: 10 });
+        displayAvenueName(avenueName);
     });
 
-    // Add mouseover and click event listeners to the route line
-    google.maps.event.addListener(routeLine, 'mouseover', function () {
-        displayAvenueName("Route 5");
-    });
-
-    google.maps.event.addListener(routeLine, 'mouseout', function () {
+    google.maps.event.addListener(segmentLine, 'mouseout', function () {
+        segmentLine.setOptions({ strokeWeight: 5 });
         hideAvenueName();
     });
 
-    google.maps.event.addListener(routeLine, 'click', function () {
-        displayGraphs("Route 5");
+    google.maps.event.addListener(segmentLine, 'click', function () {
+        displayGraphs(avenueName);
     });
 }
 
 // Function to display avenue name
-function displayAvenueName(name) {
+function displayAvenueName(avenueName) {
     var avenueLabel = document.createElement('div');
     avenueLabel.id = 'avenueLabel';
     avenueLabel.style.position = 'absolute';
@@ -71,7 +70,7 @@ function displayAvenueName(name) {
     avenueLabel.style.border = '1px solid black';
     avenueLabel.style.top = '10px';
     avenueLabel.style.left = '10px';
-    avenueLabel.innerHTML = name;
+    avenueLabel.innerHTML = avenueName;
     document.body.appendChild(avenueLabel);
 }
 
@@ -83,11 +82,9 @@ function hideAvenueName() {
     }
 }
 
-// Function to display graphs
-function displayGraphs(name) {
-    console.log("Displaying graphs for:", name); // Check if function is called correctly
-
-    // Dummy data for demonstration
+// Function to display graphs (using Chart.js for simplicity)
+function displayGraphs(avenueName) {
+    // Here we'll create dummy data for demonstration purposes
     var data = {
         labels: ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"],
         datasets: [{
@@ -125,8 +122,6 @@ function displayGraphs(name) {
 
     // Create a container for the graphs
     var graphContainer = document.getElementById('graphContainer');
-
-    // Clear previous graphs
     graphContainer.innerHTML = '';
 
     // Create canvas elements for each graph
