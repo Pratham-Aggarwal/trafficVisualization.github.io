@@ -1,15 +1,12 @@
-html, body {
+/* Add your CSS styles here */
+body, html {
     height: 100%;
     margin: 0;
     padding: 0;
-  }
-  
-  #map {
-    height: 70%;
-  }
-  
-  #data-container {
-    height: 30%;
-    overflow: auto;
-    padding: 10px;
-  }
+}
+
+#map {
+    height: 100%;
+}
+
+/* Add any additional CSS styles as needed */
