@@ -1,12 +1,5 @@
-/* Add your CSS styles here */
-body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
+/* Basic styles for the map */
 #map {
-    height: 100%;
+    height: 100vh;
+    width: 100%;
 }
-
-/* Add any additional CSS styles as needed */
